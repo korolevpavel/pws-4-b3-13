@@ -43,11 +43,11 @@ class Tag:
             return opening + internal + ending
         else:
             if self.is_single:
-                return "<{tag} {attrs}/>".format(tag=self.tag, attrs=attrs)
+                return "<{tag} {attrs}/>".format(tag=self.tag, attrs=attrs).replace(" >", ">")
             else:
-                return "<{tag}{attrs}>{text}</{tag}>".format(
+                return "<{tag} {attrs}>{text}</{tag}>".format(
                     tag=self.tag, attrs=attrs, text=self.text
-                )
+                ).replace(" >", ">")
 
 
 class HTML:
@@ -129,4 +129,4 @@ def main(output=None):
 
 
 if __name__ == "__main__":
-    main()
+    main("index.html")
