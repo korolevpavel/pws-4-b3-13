@@ -1,14 +1,35 @@
 class Tag:
     # ...
 
+
 class HTML:
     # ...
 
+
 class TopLevelTag:
-    # ...
+     def __init__(self, tag):
+        self.tag = tag
+        self.children = []
+
+    def __iadd__(self, other):
+        self.children.append(other)
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        pass
+
+    def __str__(self):
+        html = "<%s>\n" % self.tag
+        for child in self.children:
+            html += str(child)
+        html += "\n</%s>" % self.tag
+        return html
 
 
-if __name__ == "__main__":
+def main(output=None):
     with HTML(output=None) as doc:
         with TopLevelTag("head") as head:
             with Tag("title") as title:
@@ -32,3 +53,7 @@ if __name__ == "__main__":
                 body += div
 
             doc += body
+
+
+if __name__ == "__main__":
+    main("index.html")
