@@ -15,10 +15,10 @@ class Tag:
                 attr = attr.replace("_", "-")
             self.attributes[attr] = value
 
-    def __enter__(self):
+    def __enter__(self, *args):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         pass
 
     def __iadd__(self, other):
@@ -45,7 +45,7 @@ class Tag:
             if self.is_single:
                 return "<{tag} {attrs}/>".format(tag=self.tag, attrs=attrs)
             else:
-                return "<{tag} {attrs}>{text}</{tag}>".format(
+                return "<{tag}{attrs}>{text}</{tag}>".format(
                     tag=self.tag, attrs=attrs, text=self.text
                 )
 
@@ -62,7 +62,7 @@ class HTML:
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         if self.output is not None:
             with open(self.output, "w") as fp:
                 fp.write(str(self))
@@ -78,7 +78,7 @@ class HTML:
 
 
 class TopLevelTag:
-     def __init__(self, tag):
+    def __init__(self, tag, **kwargs):
         self.tag = tag
         self.children = []
 
@@ -89,7 +89,7 @@ class TopLevelTag:
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         pass
 
     def __str__(self):
@@ -101,7 +101,7 @@ class TopLevelTag:
 
 
 def main(output=None):
-    with HTML(output=None) as doc:
+    with HTML(output=output) as doc:
         with TopLevelTag("head") as head:
             with Tag("title") as title:
                 title.text = "hello"
@@ -118,7 +118,9 @@ def main(output=None):
                     paragraph.text = "another test"
                     div += paragraph
 
-                with Tag("img", is_single=True, src="/icon.png") as img:
+                with Tag(
+                    "img", is_single=True, src="/icon.png", data_image="responsive"
+                ) as img:
                     div += img
 
                 body += div
@@ -127,4 +129,4 @@ def main(output=None):
 
 
 if __name__ == "__main__":
-    main("index.html")
+    main()
